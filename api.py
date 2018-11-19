@@ -3,8 +3,9 @@ import os
 from skimage.io import imread, imsave
 from skimage.transform import estimate_transform, warp
 from time import time
+import keras
 
-from predictor import PosPrediction
+from keras_predictor import PosPrediction
 
 class PRN:
     ''' Joint 3D Face Reconstruction and Dense Alignment with Position Map Regression Network
@@ -27,8 +28,8 @@ class PRN:
 
         #---- load PRN 
         self.pos_predictor = PosPrediction(self.resolution_inp, self.resolution_op)
-        prn_path = os.path.join(prefix, 'Data/net-data/256_256_resfcn256_weight')
-        if not os.path.isfile(prn_path + '.data-00000-of-00001'):
+        prn_path = os.path.join(prefix, 'Data/net-data/weights.190-0.0010.hdf5')
+        if not os.path.isfile(prn_path):
             print("please download PRN trained model first.")
             exit()
         self.pos_predictor.restore(prn_path)
@@ -114,6 +115,9 @@ class PRN:
         
         image = image/255.
         cropped_image = warp(image, tform.inverse, output_shape=(self.resolution_inp, self.resolution_inp))
+        cropped_image = cropped_image * 255.
+        cropped_image = cropped_image / 127.5
+        cropped_image = cropped_image - 1.0
 
         # run our net
         #st = time()
@@ -180,11 +184,3 @@ class PRN:
         colors = image[ind[:,1], ind[:,0], :] # n x 3
 
         return colors
-
-
-
-
-
-
-
-

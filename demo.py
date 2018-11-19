@@ -15,6 +15,7 @@ from utils.rotate_vertices import frontalize
 from utils.render_app import get_visibility, get_uv_mask, get_depth_image
 from utils.write import write_obj_with_colors, write_obj_with_texture
 
+
 def main(args):
     if args.isShow or args.isTexture:
         import cv2
